@@ -16,14 +16,15 @@ namespace WebAPIApplication.Configuration
             
             config.Routes.MapHttpRoute(
                 name: "InquiryCriteriaApi",
-                routeTemplate: "api/customers/inquiry",
-                defaults: new {controller = "Customers", action = "Inquiry"}
+                routeTemplate: "api/{controller}/{action}"
             );
 
+
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
+                name: "DefaultApiWithId",
                 routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                defaults: new {id = RouteParameter.Optional}//,
+                //constraints: new {id = @"^\d+$"}    // only integers
             );
 
         }

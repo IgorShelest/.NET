@@ -12,6 +12,10 @@ using WebAPIApplication.Models;
 
 namespace WebAPIApplication.Controllers
 {
+    /// <summary>
+    /// Customer Controller
+    /// </summary>
+    [RoutePrefix("api/customers")]
     public class CustomersController : ApiController
     {
         //---------------------------------------------------------------------
@@ -72,6 +76,11 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // GET /api/customers
+
+        /// <summary>
+        /// Get all the Customers
+        /// </summary>
+        /// <returns>IEnumerable of CustomerDto objects</returns>
         [HttpGet]
         public IEnumerable<CustomerDto> GetCustomers()
         {
@@ -94,6 +103,13 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // GET /api/customers/id
+
+        /// <summary>
+        /// Get particular Customer by Id
+        /// </summary>
+        /// <param name="id">Customer id</param>
+        /// <returns>IHttpActionResult.NotFound()</returns>
+        /// <returns>IHttpActionResult.Ok(CustomerDto)</returns>
         [HttpGet]
         public IHttpActionResult GetCustomerById(int id)
         {
@@ -115,8 +131,13 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // POST /api/customers/inquiry
+
+        /// <summary>
+        /// Get particular Customer by Inquiry Criteria
+        /// </summary>
+        /// <param name="criteria">Includes parameters by which the Customer should be found</param>
         [HttpPost]
-        [ActionName("Inquiry")]
+        [Route("inquiry")]
         public IHttpActionResult GetCustomerByInquiryCriteria(InquiryCriteriaDto criteria)
         {
             var customer = LoadCustomerByInquiryCriteriaFromDb(criteria);
@@ -137,6 +158,12 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // POST /api/customers
+
+        /// <summary>
+        /// Create Customer
+        /// </summary>
+        /// <param name="customerDto">Info on the basis of which Customer will be created</param>
+        /// <returns>IHttpActionResult.Created(CustomerDto)</returns>
         [HttpPost]
         public IHttpActionResult CreateCustomer(CustomerDto customerDto)
         {
@@ -182,6 +209,13 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // PUT /api/customers/id
+
+        /// <summary>
+        /// Update Customer
+        /// </summary>
+        /// <param name="id">Customer Id</param>
+        /// <param name="customerDto">Data with which a particular Customer should be updated</param>
+        /// <returns>IHttpActionResult.Ok()</returns>
         [HttpPut]
         public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
@@ -220,6 +254,12 @@ namespace WebAPIApplication.Controllers
         //---------------------------------------------------------------------
 
         // DELETE /api/customers/id
+
+        /// <summary>
+        /// Delete particular Customer
+        /// </summary>
+        /// <param name="id">Customer Id</param>
+        /// <returns>IHttpActionResult.Ok()</returns>
         [HttpDelete]
         public IHttpActionResult DeleteCustomer(int id)
         {
