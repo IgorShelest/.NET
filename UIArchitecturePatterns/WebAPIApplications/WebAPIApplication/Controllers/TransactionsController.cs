@@ -11,6 +11,7 @@ using WebAPIApplication.Models;
 
 namespace WebAPIApplication.Controllers
 {
+    [RoutePrefix("api/transactions")]
     public class TransactionsController : ApiController
     {
         //---------------------------------------------------------------------
@@ -44,8 +45,12 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // GET /api/transactions/id
+        /// <summary>
+        /// Get particular Transaction
+        /// </summary>
+        /// <returns>IEnumerable of TransactionDto objects</returns>
         [HttpGet]
+        [Route("{id}")]
         public IHttpActionResult GetTransaction(int id)
         {
             var transaction = LoadTransactionByIdFromDb(id);
@@ -58,7 +63,11 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // POST /api/transactions
+        /// <summary>
+        /// Create Transaction
+        /// </summary>
+        /// <param name="transactionDto">Info on the basis of which Transaction will be created</param>
+        /// <returns>IHttpActionResult.Created(TransactionDto)</returns>
         [HttpPost]
         public IHttpActionResult CreateTransaction(TransactionDto transactionDto)
         {
@@ -77,8 +86,14 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // PUT /api/transactions/id
+        /// <summary>
+        /// Update Transaction
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="transactionDto"></param>
+        /// <returns>IHttpActionResult.Ok()</returns>
         [HttpPut]
+        [Route("{id}")]
         public IHttpActionResult UpdateTransaction(int id, TransactionDto transactionDto)
         {
             if (!ModelState.IsValid)
@@ -98,8 +113,13 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // DELETE /api/transactions/id
+        /// <summary>
+        /// Delete particular Transaction
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>IHttpActionResult.Ok()</returns>
         [HttpDelete]
+        [Route("{id}")]
         public IHttpActionResult DeleteTransaction(int id)
         {
             var searchedTransaction = LoadTransactionByIdFromDb(id);

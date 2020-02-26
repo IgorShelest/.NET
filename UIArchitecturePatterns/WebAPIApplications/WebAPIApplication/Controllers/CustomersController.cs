@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using WebAPIApplication.DbContext;
@@ -12,9 +13,6 @@ using WebAPIApplication.Models;
 
 namespace WebAPIApplication.Controllers
 {
-    /// <summary>
-    /// Customer Controller
-    /// </summary>
     [RoutePrefix("api/customers")]
     public class CustomersController : ApiController
     {
@@ -75,8 +73,6 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // GET /api/customers
-
         /// <summary>
         /// Get all the Customers
         /// </summary>
@@ -102,8 +98,6 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // GET /api/customers/id
-
         /// <summary>
         /// Get particular Customer by Id
         /// </summary>
@@ -111,6 +105,7 @@ namespace WebAPIApplication.Controllers
         /// <returns>IHttpActionResult.NotFound()</returns>
         /// <returns>IHttpActionResult.Ok(CustomerDto)</returns>
         [HttpGet]
+        [Route("{id}")]
         public IHttpActionResult GetCustomerById(int id)
         {
             var customer = LoadCustomerByIdFromDb(id);
@@ -156,8 +151,6 @@ namespace WebAPIApplication.Controllers
         }
 
         //---------------------------------------------------------------------
-
-        // POST /api/customers
 
         /// <summary>
         /// Create Customer
@@ -208,8 +201,6 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // PUT /api/customers/id
-
         /// <summary>
         /// Update Customer
         /// </summary>
@@ -217,6 +208,7 @@ namespace WebAPIApplication.Controllers
         /// <param name="customerDto">Data with which a particular Customer should be updated</param>
         /// <returns>IHttpActionResult.Ok()</returns>
         [HttpPut]
+        [Route("{id}")]
         public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
@@ -253,14 +245,13 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        // DELETE /api/customers/id
-
         /// <summary>
         /// Delete particular Customer
         /// </summary>
         /// <param name="id">Customer Id</param>
         /// <returns>IHttpActionResult.Ok()</returns>
         [HttpDelete]
+        [Route("{id}")]
         public IHttpActionResult DeleteCustomer(int id)
         {
             var searchedCustomer = LoadCustomerByIdFromDb(id);
