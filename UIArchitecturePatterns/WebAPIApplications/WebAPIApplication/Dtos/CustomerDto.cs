@@ -20,7 +20,5 @@ namespace WebAPIApplication.Dtos
 
         [PhoneValidation(ErrorMessage = "Phone Number is incorrect. Use '(xxx)xxx-xx-xx' pattern")]
         public string MobileNumber { get; set; }
-
-        public IEnumerable<TransactionInCustomerDto> Transactions { get; set; }
     }
 }

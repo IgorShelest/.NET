@@ -115,10 +115,8 @@
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DbContext\ApplicationDbContext.cs" />
     <Compile Include="Dtos\CustomerDto.cs" />
-    <Compile Include="Dtos\CustomerInTransactionDto.cs" />
     <Compile Include="Dtos\InquiryCriteriaDto.cs" />
     <Compile Include="Dtos\TransactionDto.cs" />
-    <Compile Include="Dtos\TransactionInCustomerDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

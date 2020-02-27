@@ -16,18 +16,10 @@ namespace WebAPIApplication.AutoMapper
             // Customer Mapping
             Mapper.CreateMap<CustomerModel, CustomerDto>();
             Mapper.CreateMap<CustomerDto, CustomerModel>().ForMember(customer => customer.Id, option => option.Ignore());
-            
-            // CustomerInTransaction Mapping
-            Mapper.CreateMap<CustomerModel, CustomerInTransactionDto>();
-            Mapper.CreateMap<CustomerInTransactionDto, CustomerModel>();
 
             // Transaction Mapping
             Mapper.CreateMap<TransactionModel, TransactionDto>();
-            Mapper.CreateMap<TransactionDto, TransactionModel>().ForMember(transaction => transaction.Id, option => option.Ignore()); ;
-
-            // TransactionInCustomer Mapping
-            Mapper.CreateMap<TransactionModel, TransactionInCustomerDto>();
-            Mapper.CreateMap<TransactionInCustomerDto, TransactionModel>();
+            Mapper.CreateMap<TransactionDto, TransactionModel>().ForMember(transaction => transaction.Id, option => option.Ignore());
 
             // CurrencyCode Mapping
             Mapper.CreateMap<CurrencyCode, string>().ConvertUsing<CurrencyCodeToStringConverter>();

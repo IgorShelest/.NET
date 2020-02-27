@@ -19,7 +19,5 @@ namespace WebAPIApplication.Dtos
         public string Status { get; set; }
 
         public int CustomerId { get; set; }
-
-        public CustomerInTransactionDto Customer { get; set; }
     }
 }

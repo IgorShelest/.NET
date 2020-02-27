@@ -27,20 +27,19 @@ namespace WebAPIApplication.Controllers
 
         //---------------------------------------------------------------------
 
-        private List<TransactionModel> LoadTransactionsFromDb()
+        private TransactionModel LoadTransactionByIdFromDb(int id)
         {
             return _dbContext.Transactions
-                .Include("Customer")
-                .ToList();
+                .SingleOrDefault(transaction => transaction.Id == id);
         }
 
         //---------------------------------------------------------------------
 
-        private TransactionModel LoadTransactionByIdFromDb(int id)
+        private List<TransactionModel> LoadTransactionsByCustomerIdFromDb(int id)
         {
             return _dbContext.Transactions
-                .Include("Customer")
-                .SingleOrDefault(transaction => transaction.Id == id);
+                .Where(transaction => transaction.CustomerId == id)
+                .ToList();
         }
 
         //---------------------------------------------------------------------
@@ -59,6 +58,19 @@ namespace WebAPIApplication.Controllers
                 NotFound();
 
             return Ok(Mapper.Map<TransactionModel, TransactionDto>(transaction));
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Get particular Transaction
+        /// </summary>
+        /// <returns>IEnumerable of TransactionDto objects</returns>
+        [HttpGet]
+        [Route("byCustomer/{id}")]
+        public IEnumerable<TransactionDto> GetTransactionByCustomerId(int id)
+        {
+            return LoadTransactionsByCustomerIdFromDb(id).Select(Mapper.Map<TransactionModel, TransactionDto>);
         }
 
         //---------------------------------------------------------------------

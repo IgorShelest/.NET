@@ -80,20 +80,9 @@ namespace WebAPIApplication.Controllers
         [HttpGet]
         public IEnumerable<CustomerDto> GetCustomers()
         {
-            var customersDto = LoadCustomersFromDb().Select(Mapper.Map<CustomerModel, CustomerDto>).ToList();
-            var transactions = LoadTransactionsFromDb();
+            var customers = LoadCustomersFromDb().Select(Mapper.Map<CustomerModel, CustomerDto>).ToList();
 
-            // Attach Customer Transactions
-            foreach (var customerDto in customersDto)
-            {
-                var customerTransactionsDto = transactions
-                    .Where(t => t.CustomerId == customerDto.Id)
-                    .Select(Mapper.Map<TransactionModel, TransactionInCustomerDto>);
-
-                customerDto.Transactions = customerTransactionsDto;
-            }
-
-            return customersDto;
+            return customers;
         }
 
         //---------------------------------------------------------------------
@@ -112,20 +101,12 @@ namespace WebAPIApplication.Controllers
             if (customer == null)
                 NotFound();
 
-            // Attach Customer Transactions
-            var customerTransactionsDto = LoadTransactionsFromDb()
-                .Where(t => t.CustomerId == customer.Id)
-                .Select(Mapper.Map<TransactionModel, TransactionInCustomerDto>);
-
             var customerDto = Mapper.Map<CustomerModel, CustomerDto>(customer);
-            customerDto.Transactions = customerTransactionsDto;
 
             return Ok(customerDto);
         }
 
         //---------------------------------------------------------------------
-
-        // POST /api/customers/inquiry
 
         /// <summary>
         /// Get particular Customer by Inquiry Criteria
@@ -139,13 +120,7 @@ namespace WebAPIApplication.Controllers
             if (customer == null)
                 NotFound();
 
-            // Attach Customer Transactions
-            var customerTransactionsDto = LoadTransactionsFromDb()
-                .Where(t => t.CustomerId == customer.Id)
-                .Select(Mapper.Map<TransactionModel, TransactionInCustomerDto>);
-
             var customerDto = Mapper.Map<CustomerModel, CustomerDto>(customer);
-            customerDto.Transactions = customerTransactionsDto;
 
             return Ok(customerDto);
         }
@@ -168,33 +143,10 @@ namespace WebAPIApplication.Controllers
             // Add Customer to Db
             _dbContext.Customers.Add(customer);
 
-
-            // Add Customer Transactions to Db
-            List<TransactionModel> customerTransactions = null;
-
-            if (customerDto.Transactions != null)
-            {
-                customerTransactions = customerDto.Transactions
-                    .Select(Mapper.Map<TransactionInCustomerDto, TransactionModel>)
-                    .Select(t =>
-                    {
-                        t.CustomerId = customer.Id;
-                        return t;
-                    })
-                    .ToList();
-                
-                foreach (var transaction in customerTransactions)
-                    _dbContext.Transactions.Add(transaction);
-            }
-
             _dbContext.SaveChanges();
 
             // Update Customer with Db Ids
             customerDto.Id = customer.Id;
-
-            // Update Customer Transactions with Db Ids
-            if (customerTransactions != null)
-                customerDto.Transactions = customerTransactions.Select(Mapper.Map<TransactionModel, TransactionInCustomerDto>);
 
             return Created(new Uri(Request.RequestUri + "/" + customerDto.Id), customerDto);
         }
@@ -221,22 +173,6 @@ namespace WebAPIApplication.Controllers
 
             // Update Customer in Db
             Mapper.Map(customerDto, customer);
-            
-            // Add Customer Transactions into Db
-            if (customerDto.Transactions != null)
-            {
-                var customerTransactions = customerDto.Transactions
-                    .Select(Mapper.Map<TransactionInCustomerDto, TransactionModel>)
-                    .Select(t =>
-                    {
-                        t.CustomerId = customer.Id;
-                        return t;
-                    })
-                    .ToList();
-                
-                foreach (var transaction in customerTransactions)
-                    _dbContext.Transactions.Add(transaction);
-            }
 
             _dbContext.SaveChanges();
 
