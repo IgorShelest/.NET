@@ -5,6 +5,7 @@ using System.Web;
 using AutoMapper;
 using WebAPIApplication.AutoMapper.TypeConverters;
 using WebAPIApplication.Dtos;
+using WebAPIApplication.Enums;
 using WebAPIApplication.Models;
 
 namespace WebAPIApplication.AutoMapper
