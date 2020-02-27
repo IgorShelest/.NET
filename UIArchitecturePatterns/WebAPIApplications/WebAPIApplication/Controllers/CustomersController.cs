@@ -160,19 +160,20 @@ namespace WebAPIApplication.Controllers
         /// <param name="customerDto">Data with which a particular Customer should be updated</param>
         /// <returns>IHttpActionResult.Ok()</returns>
         [HttpPut]
-        [Route("{id}")]
-        public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
+        public IHttpActionResult UpdateCustomer(CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            var customer = LoadCustomerByIdFromDb(id);
+            var customer = LoadCustomerByIdFromDb(customerDto.Id);
 
             if (customer == null)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
 
             // Update Customer in Db
-            Mapper.Map(customerDto, customer);
+            customer.Name = customerDto.Name;
+            customer.Email = customerDto.Email;
+            customer.MobileNumber = customerDto.MobileNumber;
 
             _dbContext.SaveChanges();
 
