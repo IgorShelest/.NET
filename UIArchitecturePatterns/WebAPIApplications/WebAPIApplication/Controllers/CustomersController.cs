@@ -171,9 +171,8 @@ namespace WebAPIApplication.Controllers
                 throw new HttpResponseException(HttpStatusCode.NotFound);
 
             // Update Customer in Db
-            customer.Name = customerDto.Name;
-            customer.Email = customerDto.Email;
-            customer.MobileNumber = customerDto.MobileNumber;
+            Mapper.Map<CustomerDto, CustomerModel>(customerDto, customer);
+            _dbContext.Entry(customer).State = EntityState.Modified;
 
             _dbContext.SaveChanges();
 
