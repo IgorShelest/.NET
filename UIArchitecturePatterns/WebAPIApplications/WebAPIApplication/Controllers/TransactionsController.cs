@@ -8,6 +8,7 @@ using AutoMapper;
 using WebAPIApplication.DbContext;
 using WebAPIApplication.Dtos;
 using WebAPIApplication.Models;
+using WebAPIApplication.Services;
 
 namespace WebAPIApplication.Controllers
 {
@@ -16,30 +17,13 @@ namespace WebAPIApplication.Controllers
     {
         //---------------------------------------------------------------------
 
-        private ApplicationDbContext _dbContext;
+        private TransactionService _transactionService;
 
         //---------------------------------------------------------------------
 
-        TransactionsController()
+        public TransactionsController()
         {
-            _dbContext = new ApplicationDbContext();
-        }
-
-        //---------------------------------------------------------------------
-
-        private TransactionModel LoadTransactionByIdFromDb(int id)
-        {
-            return _dbContext.Transactions
-                .SingleOrDefault(transaction => transaction.Id == id);
-        }
-
-        //---------------------------------------------------------------------
-
-        private List<TransactionModel> LoadTransactionsByCustomerIdFromDb(int id)
-        {
-            return _dbContext.Transactions
-                .Where(transaction => transaction.CustomerId == id)
-                .ToList();
+            _transactionService = new TransactionService();
         }
 
         //---------------------------------------------------------------------
@@ -52,7 +36,7 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult GetTransaction(int id)
         {
-            var transaction = LoadTransactionByIdFromDb(id);
+            var transaction = _transactionService.LoadById(id);
 
             if (transaction == null)
                 NotFound();
@@ -70,7 +54,8 @@ namespace WebAPIApplication.Controllers
         [Route("byCustomer/{id}")]
         public IEnumerable<TransactionDto> GetTransactionByCustomerId(int id)
         {
-            return LoadTransactionsByCustomerIdFromDb(id).Select(Mapper.Map<TransactionModel, TransactionDto>);
+            return _transactionService.LoadByCustomerId(id)
+                .Select(Mapper.Map<TransactionModel, TransactionDto>);
         }
 
         //---------------------------------------------------------------------
@@ -88,10 +73,7 @@ namespace WebAPIApplication.Controllers
 
             var transaction = Mapper.Map<TransactionDto, TransactionModel>(transactionDto);
 
-            _dbContext.Transactions.Add(transaction);
-            _dbContext.SaveChanges();
-
-            transactionDto.Id = transaction.Id;
+            transactionDto.Id = _transactionService.Create(transaction);
 
             return Created(new Uri(Request.RequestUri + "/" + transactionDto.Id), transactionDto);
         }
@@ -111,14 +93,11 @@ namespace WebAPIApplication.Controllers
             if (!ModelState.IsValid)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            var transaction = LoadTransactionByIdFromDb(id);
+            var transaction = Mapper.Map<TransactionDto, TransactionModel>(transactionDto);
 
-            if (transaction == null)
+            var updateResult = _transactionService.Update(transaction);
+            if (!updateResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
-
-            Mapper.Map(transactionDto, transaction);
-
-            _dbContext.SaveChanges();
 
             return Ok();
         }
@@ -134,13 +113,9 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult DeleteTransaction(int id)
         {
-            var searchedTransaction = LoadTransactionByIdFromDb(id);
-
-            if (searchedTransaction == null)
+            var deleteResult = _transactionService.Delete(id);
+            if (!deleteResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
-
-            _dbContext.Transactions.Remove(searchedTransaction);
-            _dbContext.SaveChanges();
 
             return Ok();
         }
