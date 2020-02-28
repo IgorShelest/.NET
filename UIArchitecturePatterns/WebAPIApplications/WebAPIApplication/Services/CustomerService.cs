@@ -25,21 +25,21 @@ namespace WebAPIApplication.Services
 
         //---------------------------------------------------------------------
 
-        public IEnumerable<CustomerModel> LoadCustomers()
+        public IEnumerable<CustomerModel> LoadAll()
         {
             return _dbContext.Customers.ToList();
         }
 
         //---------------------------------------------------------------------
 
-        public CustomerModel LoadCustomerById(int id)
+        public CustomerModel LoadById(int id)
         {
             return _dbContext.Customers.SingleOrDefault(customer => customer.Id == id);
         }
 
         //---------------------------------------------------------------------
 
-        public CustomerModel LoadCustomerByInquiryCriteria(InquiryCriteriaDto criteria)
+        public CustomerModel LoadByInquiryCriteria(InquiryCriteriaDto criteria)
         {
             CustomerModel searchedCustomer = null;
 
@@ -62,7 +62,7 @@ namespace WebAPIApplication.Services
 
         //---------------------------------------------------------------------
 
-        public int CreateCustomer(CustomerModel customer)
+        public int Create(CustomerModel customer)
         {
             _dbContext.Customers.Add(customer);
             _dbContext.SaveChanges();
@@ -72,9 +72,9 @@ namespace WebAPIApplication.Services
 
         //---------------------------------------------------------------------
 
-        public bool UpdateCustomer(CustomerModel customer)
+        public bool Update(CustomerModel customer)
         {
-            var customerDoesNotExist = LoadCustomerById(customer.Id) == null;
+            var customerDoesNotExist = LoadById(customer.Id) == null;
             if (customerDoesNotExist)
                 return false;
 
@@ -86,9 +86,9 @@ namespace WebAPIApplication.Services
 
         //---------------------------------------------------------------------
 
-        public bool DeleteCustomer(int id)
+        public bool Delete(int id)
         {
-            var customer = LoadCustomerById(id);
+            var customer = LoadById(id);
             if (customer == null)
                 return false;
 

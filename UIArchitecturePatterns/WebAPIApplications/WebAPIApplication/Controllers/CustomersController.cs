@@ -38,7 +38,7 @@ namespace WebAPIApplication.Controllers
         public IEnumerable<CustomerDto> GetCustomers()
         {
             var customerDtos = 
-                _customerService.LoadCustomers().Select(Mapper.Map<CustomerModel, CustomerDto>);
+                _customerService.LoadAll().Select(Mapper.Map<CustomerModel, CustomerDto>);
 
             return customerDtos;
         }
@@ -55,7 +55,7 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult GetCustomerById(int id)
         {
-            var customer = _customerService.LoadCustomerById(id);
+            var customer = _customerService.LoadById(id);
             if (customer == null)
                 NotFound();
 
@@ -74,7 +74,7 @@ namespace WebAPIApplication.Controllers
         [Route("inquiry")]
         public IHttpActionResult GetCustomerByInquiryCriteria(InquiryCriteriaDto criteria)
         {
-            var customer = _customerService.LoadCustomerByInquiryCriteria(criteria);
+            var customer = _customerService.LoadByInquiryCriteria(criteria);
             if (customer == null)
                 NotFound();
 
@@ -99,7 +99,7 @@ namespace WebAPIApplication.Controllers
             var customer = Mapper.Map<CustomerDto, CustomerModel>(customerDto);
             
             // Update Customer with Db Ids
-            customerDto.Id = _customerService.CreateCustomer(customer);
+            customerDto.Id = _customerService.Create(customer);
 
             return Created(new Uri(Request.RequestUri + "/" + customerDto.Id), customerDto);
         }
@@ -120,7 +120,7 @@ namespace WebAPIApplication.Controllers
 
             var customer = Mapper.Map<CustomerDto, CustomerModel>(customerDto);
 
-            var updateResult = _customerService.UpdateCustomer(customer);
+            var updateResult = _customerService.Update(customer);
             if (!updateResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             
@@ -138,7 +138,7 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult DeleteCustomer(int id)
         {
-            var deleteResult = _customerService.DeleteCustomer(id);
+            var deleteResult = _customerService.Delete(id);
             if (!deleteResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             
