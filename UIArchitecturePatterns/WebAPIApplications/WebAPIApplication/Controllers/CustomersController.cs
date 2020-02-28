@@ -10,6 +10,7 @@ using AutoMapper;
 using WebAPIApplication.DbContext;
 using WebAPIApplication.Dtos;
 using WebAPIApplication.Models;
+using WebAPIApplication.Services;
 
 namespace WebAPIApplication.Controllers
 {
@@ -18,57 +19,13 @@ namespace WebAPIApplication.Controllers
     {
         //---------------------------------------------------------------------
 
-        private ApplicationDbContext _dbContext;
+        private readonly CustomerService _customerService;
 
         //---------------------------------------------------------------------
 
-        CustomersController()
+        public CustomersController()
         {
-            _dbContext = new ApplicationDbContext();
-        }
-
-        //---------------------------------------------------------------------
-
-        private List<CustomerModel> LoadCustomersFromDb()
-        {
-            return _dbContext.Customers.ToList();
-        }
-
-        //---------------------------------------------------------------------
-
-        private List<TransactionModel> LoadTransactionsFromDb()
-        {
-            return _dbContext.Transactions.ToList();
-        }
-
-        //---------------------------------------------------------------------
-
-        private CustomerModel LoadCustomerByIdFromDb(int id)
-        {
-            return _dbContext.Customers.SingleOrDefault(customer => customer.Id == id);
-        }
-
-        //---------------------------------------------------------------------
-
-        private CustomerModel LoadCustomerByInquiryCriteriaFromDb(InquiryCriteriaDto criteria)
-        {
-            CustomerModel searchedCustomer = null;
-
-            if (criteria.Id != null && !string.IsNullOrEmpty(criteria.Email) && !string.IsNullOrWhiteSpace(criteria.Email))
-            {
-                searchedCustomer = _dbContext.Customers.FirstOrDefault(customer =>
-                    (customer.Id == criteria.Id) && (customer.Email == criteria.Email));
-            }
-            else if (criteria.Id != null)
-            {
-                searchedCustomer = _dbContext.Customers.FirstOrDefault(customer => customer.Id == criteria.Id);
-            }
-            else if (!string.IsNullOrEmpty(criteria.Email) && !string.IsNullOrWhiteSpace(criteria.Email))
-            {
-                searchedCustomer = _dbContext.Customers.FirstOrDefault(customer => customer.Email == criteria.Email);
-            }
-                
-            return searchedCustomer;
+            _customerService = new CustomerService();
         }
 
         //---------------------------------------------------------------------
@@ -80,9 +37,10 @@ namespace WebAPIApplication.Controllers
         [HttpGet]
         public IEnumerable<CustomerDto> GetCustomers()
         {
-            var customers = LoadCustomersFromDb().Select(Mapper.Map<CustomerModel, CustomerDto>).ToList();
+            var customerDtos = 
+                _customerService.LoadCustomers().Select(Mapper.Map<CustomerModel, CustomerDto>);
 
-            return customers;
+            return customerDtos;
         }
 
         //---------------------------------------------------------------------
@@ -97,7 +55,7 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult GetCustomerById(int id)
         {
-            var customer = LoadCustomerByIdFromDb(id);
+            var customer = _customerService.LoadCustomerById(id);
             if (customer == null)
                 NotFound();
 
@@ -116,7 +74,7 @@ namespace WebAPIApplication.Controllers
         [Route("inquiry")]
         public IHttpActionResult GetCustomerByInquiryCriteria(InquiryCriteriaDto criteria)
         {
-            var customer = LoadCustomerByInquiryCriteriaFromDb(criteria);
+            var customer = _customerService.LoadCustomerByInquiryCriteria(criteria);
             if (customer == null)
                 NotFound();
 
@@ -139,14 +97,9 @@ namespace WebAPIApplication.Controllers
                 return BadRequest();
 
             var customer = Mapper.Map<CustomerDto, CustomerModel>(customerDto);
-
-            // Add Customer to Db
-            _dbContext.Customers.Add(customer);
-
-            _dbContext.SaveChanges();
-
+            
             // Update Customer with Db Ids
-            customerDto.Id = customer.Id;
+            customerDto.Id = _customerService.CreateCustomer(customer);
 
             return Created(new Uri(Request.RequestUri + "/" + customerDto.Id), customerDto);
         }
@@ -165,17 +118,12 @@ namespace WebAPIApplication.Controllers
             if (!ModelState.IsValid)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            var customer = LoadCustomerByIdFromDb(customerDto.Id);
+            var customer = Mapper.Map<CustomerDto, CustomerModel>(customerDto);
 
-            if (customer == null)
+            var updateResult = _customerService.UpdateCustomer(customer);
+            if (!updateResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
-
-            // Update Customer in Db
-            Mapper.Map<CustomerDto, CustomerModel>(customerDto, customer);
-            _dbContext.Entry(customer).State = EntityState.Modified;
-
-            _dbContext.SaveChanges();
-
+            
             return Ok();
         }
 
@@ -190,14 +138,10 @@ namespace WebAPIApplication.Controllers
         [Route("{id}")]
         public IHttpActionResult DeleteCustomer(int id)
         {
-            var searchedCustomer = LoadCustomerByIdFromDb(id);
-
-            if (searchedCustomer == null)
+            var deleteResult = _customerService.DeleteCustomer(id);
+            if (!deleteResult)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
-
-            _dbContext.Customers.Remove(searchedCustomer);
-            _dbContext.SaveChanges();
-
+            
             return Ok();
         }
 
