@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebAPIApplication.Enums;
 using WebAPIApplication.Models;
 
 namespace WebAPIApplication.Dtos
@@ -14,12 +15,10 @@ namespace WebAPIApplication.Dtos
 
         public decimal Amount { get; set; }
 
-        public  string  Currency { get; set; }
+        public  CurrencyCode  Currency { get; set; }
 
-        public string Status { get; set; }
+        public TransactionStatus Status { get; set; }
 
         public int CustomerId { get; set; }
-
-        public CustomerInTransactionDto Customer { get; set; }
     }
 }
