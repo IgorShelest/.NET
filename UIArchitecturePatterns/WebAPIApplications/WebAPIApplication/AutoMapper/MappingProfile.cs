@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using AutoMapper;
-using WebAPIApplication.AutoMapper.TypeConverters;
 using WebAPIApplication.Dtos;
-using WebAPIApplication.Enums;
 using WebAPIApplication.Models;
 
 namespace WebAPIApplication.AutoMapper
@@ -21,14 +19,6 @@ namespace WebAPIApplication.AutoMapper
             // Transaction Mapping
             Mapper.CreateMap<TransactionModel, TransactionDto>();
             Mapper.CreateMap<TransactionDto, TransactionModel>().ForMember(transaction => transaction.Id, option => option.Ignore());
-
-            // CurrencyCode Mapping
-            Mapper.CreateMap<CurrencyCode, string>().ConvertUsing<CurrencyCodeToStringConverter>();
-            Mapper.CreateMap<string, CurrencyCode>().ConvertUsing<StringToCurrencyCodeConverter>();
-
-            // TransactionStatus Mapping
-            Mapper.CreateMap<TransactionStatus, string>().ConvertUsing<TransactionStatusToStringConverter>();
-            Mapper.CreateMap<string, TransactionStatus>().ConvertUsing<StringToTransactionStatusConverter>();
         }
     }
 }

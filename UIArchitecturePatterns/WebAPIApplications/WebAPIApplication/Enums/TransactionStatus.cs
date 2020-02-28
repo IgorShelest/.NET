@@ -7,6 +7,9 @@ namespace WebAPIApplication.Enums
 {
     public enum TransactionStatus
     {
-        UnknownStatus, Success, Failed, Cancelled
+        UnknownStatus = 0, 
+        Success = 1, 
+        Failed = 2, 
+        Cancelled = 3
     }
 }

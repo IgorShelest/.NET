@@ -7,6 +7,10 @@ namespace WebAPIApplication.Enums
 {
     public enum CurrencyCode
     {
-        UnknownCurrency, USD, JPY, THB, SGD
+        UnknownCurrency = 0, 
+        USD = 1, 
+        JPY = 2, 
+        THB = 3, 
+        SGD = 4
     }
 }
