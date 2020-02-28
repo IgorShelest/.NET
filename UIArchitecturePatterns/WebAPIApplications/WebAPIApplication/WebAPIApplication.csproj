@@ -106,15 +106,13 @@
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="AutoMapper\MappingProfile.cs" />
-    <Compile Include="AutoMapper\TypeConverters\CurrencyCodeToStringConverter.cs" />
-    <Compile Include="AutoMapper\TypeConverters\StringToCurrencyCodeConverter.cs" />
-    <Compile Include="AutoMapper\TypeConverters\StringToTransactionStatusConverter.cs" />
-    <Compile Include="AutoMapper\TypeConverters\TransactionStatusToStringConverter.cs" />
     <Compile Include="Configuration\WebAPIConfig.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
+    <Compile Include="Controllers\InitializationController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DbContext\ApplicationDbContext.cs" />
     <Compile Include="Dtos\CustomerDto.cs" />
+    <Compile Include="Dtos\InitializationDataDto.cs" />
     <Compile Include="Dtos\InquiryCriteriaDto.cs" />
     <Compile Include="Dtos\TransactionDto.cs" />
     <Compile Include="Enums\CurrencyCode.cs" />
